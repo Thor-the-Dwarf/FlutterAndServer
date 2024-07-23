@@ -1,18 +1,11 @@
 {
   "version": 2,
-  "projectSettings": {
-    "framework": "other"
-  },
+  "public": "build/web",
   "builds": [
-    {
-      "src": "package.json",
-      "use": "@vercel/next"
-    }
+    { "src": "build/web/**", "use": "@vercel/static" }
   ],
   "routes": [
-    {
-      "src": "/(.*)",
-      "dest": "/index.html"
-    }
+    { "handle": "filesystem" },
+    { "src": "/.*", "dest": "/index.html" }
   ]
 }
