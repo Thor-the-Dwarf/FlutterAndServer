@@ -1,8 +1,12 @@
 {
+  "version": 2,
+  "projectSettings": {
+    "framework": "other"
+  },
   "builds": [
     {
-      "src": "web/index.html",
-      "use": "@vercel/static"
+      "src": "package.json",
+      "use": "@vercel/next"
     }
   ],
   "routes": [
@@ -10,7 +14,5 @@
       "src": "/(.*)",
       "dest": "/index.html"
     }
-  ],
-  "buildCommand": "flutter build web",
-  "outputDirectory": "build/web"
+  ]
 }
