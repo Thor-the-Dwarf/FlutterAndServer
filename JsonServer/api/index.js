@@ -3,6 +3,7 @@ const path = require('path');
 const cors = require('cors');
 const admin = require('firebase-admin');
 require('dotenv').config();
+
 const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT_KEY);
 
 admin.initializeApp({
@@ -31,13 +32,14 @@ server.post('/api/codes', (req, res) => {
     const codesRef = db.ref('codes');
     codesRef.push(newCode, error => {
       if (error) {
+        console.error('Firebase push error:', error);
         res.status(500).json({ error: 'Internal Server Error', message: error.message });
       } else {
         res.status(201).json(newCode);
       }
     });
   } catch (error) {
-    console.error('Error writing to Firebase:', error);
+    console.error('Server error:', error);
     res.status(500).json({ error: 'Internal Server Error', message: error.message });
   }
 });
