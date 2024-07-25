@@ -4,7 +4,7 @@ const fs = require('fs');
 const cors = require('cors');
 
 const server = jsonServer.create();
-const router = jsonServer.router(path.join(__dirname, 'db.json'));
+const router = jsonServer.router(path.join(__dirname, '..', 'db.json')); // Pfad zur db.json im übergeordneten Verzeichnis
 const middlewares = jsonServer.defaults();
 
 server.use(cors()); // CORS Middleware hinzufügen
@@ -12,8 +12,8 @@ server.use(jsonServer.bodyParser);
 server.use(middlewares);
 
 // Custom route to handle POST requests and update db.json
-server.post('/codes', (req, res) => {
-  const dbFilePath = path.join(__dirname, 'db.json');
+server.post('/api/codes', (req, res) => {
+  const dbFilePath = path.join(__dirname, '..', 'db.json');
   const newCode = req.body;
 
   // Read the current content of db.json
@@ -26,7 +26,7 @@ server.post('/codes', (req, res) => {
   res.status(201).json(newCode);
 });
 
-server.use(router);
+server.use('/api', router);
 
 const PORT = process.env.PORT || 3000;
 server.listen(PORT, () => {
