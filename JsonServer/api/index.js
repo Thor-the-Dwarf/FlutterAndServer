@@ -1,10 +1,18 @@
 const jsonServer = require('json-server');
 const path = require('path');
-const fs = require('fs');
 const cors = require('cors');
+const admin = require('firebase-admin');
+const serviceAccount = require('./path/to/your-service-account-file.json');
+
+admin.initializeApp({
+  credential: admin.credential.cert(serviceAccount),
+  databaseURL: 'https://your-database-name.firebaseio.com'
+});
+
+const db = admin.database();
 
 const server = jsonServer.create();
-const router = jsonServer.router(path.join(__dirname, 'db.json')); // Korrigierter Pfad
+const router = jsonServer.router(path.join(__dirname, 'db.json'));
 const middlewares = jsonServer.defaults();
 
 server.use(cors());
@@ -13,26 +21,22 @@ server.use(middlewares);
 
 server.post('/api/codes', (req, res) => {
   try {
-    const dbFilePath = path.join(__dirname, 'db.json');
     const newCode = req.body;
 
     if (!newCode.id || !newCode.code) {
       return res.status(400).json({ error: 'ID and code are required' });
     }
 
-    const dbContent = JSON.parse(fs.readFileSync(dbFilePath, 'utf-8'));
-
-    // Sicherstellen, dass das codes-Array existiert
-    if (!dbContent.codes) {
-      dbContent.codes = [];
-    }
-
-    dbContent.codes.push(newCode);
-
-    fs.writeFileSync(dbFilePath, JSON.stringify(dbContent, null, 2));
-    res.status(201).json(newCode);
+    const codesRef = db.ref('codes');
+    codesRef.push(newCode, error => {
+      if (error) {
+        res.status(500).json({ error: 'Internal Server Error', message: error.message });
+      } else {
+        res.status(201).json(newCode);
+      }
+    });
   } catch (error) {
-    console.error('Error writing to db.json:', error);
+    console.error('Error writing to Firebase:', error);
     res.status(500).json({ error: 'Internal Server Error', message: error.message });
   }
 });
