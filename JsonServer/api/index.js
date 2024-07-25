@@ -4,26 +4,31 @@ const fs = require('fs');
 const cors = require('cors');
 
 const server = jsonServer.create();
-const router = jsonServer.router(path.join(__dirname, '..', 'db.json')); // Pfad zur db.json im übergeordneten Verzeichnis
+const router = jsonServer.router(path.join(__dirname, 'db.json')); // Korrigierter Pfad
 const middlewares = jsonServer.defaults();
 
-server.use(cors()); // CORS Middleware hinzufügen
+server.use(cors());
 server.use(jsonServer.bodyParser);
 server.use(middlewares);
 
-// Custom route to handle POST requests and update db.json
 server.post('/api/codes', (req, res) => {
-  const dbFilePath = path.join(__dirname, '..', 'db.json');
-  const newCode = req.body;
+  try {
+    const dbFilePath = path.join(__dirname, 'db.json');
+    const newCode = req.body;
 
-  // Read the current content of db.json
-  const dbContent = JSON.parse(fs.readFileSync(dbFilePath, 'utf-8'));
-  dbContent.codes.push(newCode);
+    if (!newCode.id || !newCode.code) {
+      return res.status(400).json({ error: 'ID and code are required' });
+    }
 
-  // Write the updated content back to db.json
-  fs.writeFileSync(dbFilePath, JSON.stringify(dbContent, null, 2));
+    const dbContent = JSON.parse(fs.readFileSync(dbFilePath, 'utf-8'));
+    dbContent.codes.push(newCode);
 
-  res.status(201).json(newCode);
+    fs.writeFileSync(dbFilePath, JSON.stringify(dbContent, null, 2));
+    res.status(201).json(newCode);
+  } catch (error) {
+    console.error('Error writing to db.json:', error);
+    res.status(500).json({ error: 'Internal Server Error', message: error.message });
+  }
 });
 
 server.use('/api', router);
