@@ -1,4 +1,4 @@
 git add .
-git commit -m "realtime Database erstellt"
-git push origin main
+git commit -m "realtime Database erstellt und force pushed"
+git push origin main --force
 vercel --prod
