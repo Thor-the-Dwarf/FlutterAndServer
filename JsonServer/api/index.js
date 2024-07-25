@@ -2,11 +2,11 @@ const jsonServer = require('json-server');
 const path = require('path');
 const cors = require('cors');
 const admin = require('firebase-admin');
-const serviceAccount = require('./path/to/your-service-account-file.json');
+const serviceAccount = require('first-server-dd664-firebase-adminsdk-4yaml-9617f5ae53.json');
 
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
-  databaseURL: 'https://your-database-name.firebaseio.com'
+  databaseURL: 'https://first-server-dd664-default-rtdb.europe-west1.firebasedatabase.app/'
 });
 
 const db = admin.database();
@@ -15,7 +15,7 @@ const server = jsonServer.create();
 const router = jsonServer.router(path.join(__dirname, 'db.json'));
 const middlewares = jsonServer.defaults();
 
-server.use(cors());
+server.use(cors()); // CORS Middleware hinzufügen
 server.use(jsonServer.bodyParser);
 server.use(middlewares);
 

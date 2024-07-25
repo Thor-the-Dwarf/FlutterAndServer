@@ -1,0 +1,4 @@
+git add .
+git commit -m "realtime Database erstellt"
+git push origin main
+vercel --prod
