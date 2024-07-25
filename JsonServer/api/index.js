@@ -21,6 +21,12 @@ server.post('/api/codes', (req, res) => {
     }
 
     const dbContent = JSON.parse(fs.readFileSync(dbFilePath, 'utf-8'));
+
+    // Sicherstellen, dass das codes-Array existiert
+    if (!Array.isArray(dbContent.codes)) {
+      dbContent.codes = [];
+    }
+
     dbContent.codes.push(newCode);
 
     fs.writeFileSync(dbFilePath, JSON.stringify(dbContent, null, 2));
