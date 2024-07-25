@@ -2,11 +2,12 @@ const jsonServer = require('json-server');
 const path = require('path');
 const cors = require('cors');
 const admin = require('firebase-admin');
-const serviceAccount = require('first-server-dd664-firebase-adminsdk-4yaml-9617f5ae53.json');
+require('dotenv').config();
+const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT_KEY);
 
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
-  databaseURL: 'https://first-server-dd664-default-rtdb.europe-west1.firebasedatabase.app/'
+  databaseURL: process.env.DATABASE_URL
 });
 
 const db = admin.database();
